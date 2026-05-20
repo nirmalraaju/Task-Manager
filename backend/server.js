@@ -10,7 +10,11 @@ const PORT = process.env.PORT || 5005;
 
 // Enable CORS so the React client can talk to the backend
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: [
+    'http://localhost:5173', 
+    'http://127.0.0.1:5173',
+    'https://task-manager-frontend-nine-alpha.vercel.app' // Vercel Deployed Frontend
+  ],
   credentials: true
 }));
 

@@ -64,7 +64,11 @@ export function AuthProvider({ children }) {
       headers['Authorization'] = `Bearer ${currentToken}`;
     }
 
-    return fetch(url, { ...options, headers });
+    // Combine base API URL and relative path
+    const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+    const fullUrl = `${apiBaseUrl}${url}`;
+
+    return fetch(fullUrl, { ...options, headers });
   };
 
   useEffect(() => {
