@@ -7,15 +7,25 @@ const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH
   ? path.resolve(process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH)
   : null;
 
-if (!serviceAccountPath) {
-  console.warn("Warning: FIREBASE_SERVICE_ACCOUNT_KEY_PATH is missing from environment variables.");
-  console.warn("The server will not start successfully without credentials provided in .env.");
+if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+  try {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+    console.log("Firebase Admin SDK successfully initialized via JSON environment string.");
+  } catch (error) {
+    console.error("Critical: Failed to initialize Firebase Admin SDK via JSON string:", error);
+  }
+} else if (!serviceAccountPath) {
+  console.warn("Warning: FIREBASE_SERVICE_ACCOUNT_KEY_PATH or FIREBASE_SERVICE_ACCOUNT_JSON is missing from environment.");
+  console.warn("The server will not start successfully without credentials.");
 } else {
   try {
     admin.initializeApp({
       credential: admin.credential.cert(require(serviceAccountPath))
     });
-    console.log("Firebase Admin SDK successfully initialized.");
+    console.log("Firebase Admin SDK successfully initialized via local file path.");
   } catch (error) {
     console.error("Critical: Failed to initialize Firebase Admin SDK with key path:", serviceAccountPath, error);
   }
